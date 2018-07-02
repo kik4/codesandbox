@@ -13,15 +13,41 @@ const readBook = async () => {
   return books;
 };
 
-const Book = ({ books }) => (
-  <div>
-    <p>{books.items[0].volumeInfo.title}</p>
-    <img
-      src={books.items[0].volumeInfo.imageLinks.thumbnail}
-      alt={books.items[0].volumeInfo.title}
-    />
-  </div>
-);
+class Books extends React.Component {
+  state = {
+    isLoaded: false
+  };
+
+  // onComponentDidMount() {
+  //   const img = document.createElement("img");
+  //   const books = this.props.books;
+  //   img.src = books.items[0].volumeInfo.imageLinks.thumbnail;
+  // }
+
+  onLoad() {
+    console.log("hoge");
+    this.setState({ isLoaded: true });
+  }
+
+  render() {
+    const books = this.props.books;
+    const visibilityState = this.state.isLoaded ? "visible" : "hidden";
+    const visibilityStateU = this.state.isLoaded ? "hidden" : "visible";
+
+    return (
+      <div>
+        <p>{books.items[0].volumeInfo.title}</p>
+        <p style={{ visibility: visibilityStateU }}>image loading...</p>
+        <img
+          src={books.items[0].volumeInfo.imageLinks.thumbnail}
+          alt={books.items[0].volumeInfo.title}
+          onLoad={this.onLoad.bind(this)}
+          style={{ visibility: visibilityState }}
+        />
+      </div>
+    );
+  }
+}
 
 class App extends React.Component {
   state = {
@@ -42,7 +68,7 @@ class App extends React.Component {
         </p>
         {this.state.isLoading &&
           (this.state.books ? (
-            <Book books={this.state.books} />
+            <Books books={this.state.books} />
           ) : (
             <p>loading...</p>
           ))}
